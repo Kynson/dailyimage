@@ -1,0 +1,14 @@
+{
+  "name": "dailyimage-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kynson Szetau (https://kynsonszetau.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240222.0",
+    "typescript": "^5.3.3"
+  }
+}
