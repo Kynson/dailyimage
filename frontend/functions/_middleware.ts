@@ -14,7 +14,23 @@ class DailyImageHandler {
   }
 }
 
-function arrayBufferToBase64WebpURL(arrayBuffer: ArrayBuffer): string {
+class PromptHandler {
+  prompt?: string;
+
+  constructor(prompt: string) {
+    this.prompt = prompt;
+  }
+
+  element(promptElement: Element) {
+    if (!this.prompt) {
+      promptElement.setAttribute('class', 'error');
+    }
+
+    promptElement.setInnerContent(this.prompt || 'Error: Fail to get prompt used to generate the image');
+  }
+}
+
+function arrayBufferToBase64DataURL(arrayBuffer: ArrayBuffer): string {
   const view = new Uint8Array(arrayBuffer);
 
   const rawBinaryString = view.reduce(
@@ -22,7 +38,9 @@ function arrayBufferToBase64WebpURL(arrayBuffer: ArrayBuffer): string {
     ''
   );
 
-  return `data:image/webp;base64,${btoa(rawBinaryString)}`;
+  const mimeType = rawBinaryString.startsWith('<svg') ? 'image/svg+xml' : 'image/webp';
+
+  return `data:${mimeType};base64,${btoa(rawBinaryString)}`;
 }
 
 export const onRequest: PagesFunction<Environment> = async (context) => {
@@ -41,18 +59,18 @@ export const onRequest: PagesFunction<Environment> = async (context) => {
     currentDay,
   );
 
-  if (!imageOfTheDayResponse) {
-    return new Response('Internal server error', { status: 500 });
-  }
+  const imageOfTheDayArrayBuffer = await imageOfTheDayResponse?.arrayBuffer()
+    || await context.env.ASSETS
+        .fetch(new URL('broken-image.svg', requestURL))
+        .then((response) => response.arrayBuffer());
 
-  const imageOfTheDayArrayBuffer = await imageOfTheDayResponse.arrayBuffer();
-
-  const imageOfTheDaySrc = arrayBufferToBase64WebpURL(imageOfTheDayArrayBuffer);
-  const imageOfTheDayAlt = imageOfTheDayResponse.customMetadata?.prompt || '';
+  const imageOfTheDaySrc = arrayBufferToBase64DataURL(imageOfTheDayArrayBuffer || new Uint8Array());
+  const imageOfTheDayPrompt = imageOfTheDayResponse?.customMetadata?.prompt || '';
 
   const htmlRewriter = new HTMLRewriter();
   const renderedIndexPageResponse = htmlRewriter
-    .on('img#daily-image', new DailyImageHandler(imageOfTheDaySrc, imageOfTheDayAlt))
+    .on('img#daily-image', new DailyImageHandler(imageOfTheDaySrc, imageOfTheDayPrompt))
+    .on('p#prompt', new PromptHandler(imageOfTheDayPrompt))
     .transform(indexPageResponse);
   
   renderedIndexPageResponse.headers.set('content-type', 'text/html');
