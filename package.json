@@ -1,0 +1,12 @@
+{
+  "name": "dailyimage",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Kynson Szetau (https://kynsonszetau.com/)",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "generator"
+  ]
+}

@@ -1,0 +1,7 @@
+name = 'dailyimage'
+compatibility_date = '2024-07-01'
+
+[[r2_buckets]]
+bucket_name = 'dailyimage'
+preview_bucket_name = 'dailyimage-dev'
+binding = 'IMAGE_BUCKET'

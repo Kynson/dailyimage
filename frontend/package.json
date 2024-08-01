@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "wrangler pages dev . --r2 IMAGE_BUCKET"
+    "dev": "wrangler pages dev ."
   },
   "author": "Kynson Szetau (https://kynsonszetau.com/)",
   "license": "MIT",
