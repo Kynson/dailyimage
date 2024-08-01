@@ -5,5 +5,5 @@ declare module '*.wasm' {
 
 interface Environment {
 	IMAGE_BUCKET: R2Bucket;
-	AI: any;
+	AI: Ai;
 }
